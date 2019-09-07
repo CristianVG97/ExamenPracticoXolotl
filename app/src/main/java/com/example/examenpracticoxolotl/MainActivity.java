@@ -2,9 +2,14 @@ package com.example.examenpracticoxolotl;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
+import com.example.examenpracticoxolotl.models.ProductsPropertis;
+import com.example.examenpracticoxolotl.models.ResultProducts;
 import com.example.examenpracticoxolotl.storeapi.StoreService;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,12 +42,27 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<JsonResult> call, Response<JsonResult> response) {
-                
+                if (response.isSuccessful()) {
+
+                    JsonResult jsonResult =response.body();
+                    ResultProducts resultProducts = jsonResult.getPlpResults();
+
+                    ProductsPropertis[] productsPropertis = resultProducts.getRecords();
+
+                    Log.e("FALLO","ID producto"+ productsPropertis[0].getProductId()
+                    );
+                }
+                else
+                {
+                    Log.e("FALLO","onResponse: " + response.errorBody());
+
+                }
+
             }
 
             @Override
             public void onFailure(Call<JsonResult> call, Throwable t) {
-
+                Log.e("FALLO",t.getMessage());
             }
         });
 
