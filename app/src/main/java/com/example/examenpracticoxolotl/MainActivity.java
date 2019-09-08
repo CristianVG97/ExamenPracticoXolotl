@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
@@ -20,6 +21,8 @@ import com.example.examenpracticoxolotl.models.ProductsPropertis;
 import com.example.examenpracticoxolotl.models.ResultProducts;
 import com.example.examenpracticoxolotl.storeapi.StoreService;
 
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private Retrofit retrofit;
     FloatingActionButton fb_izq ;
     FloatingActionButton fb_der ;
+    private TextView pagetextview;
 
 
     private  RecyclerView recyclerView;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         fb_izq=(FloatingActionButton)findViewById(R.id.fb_izq);
         fb_der=(FloatingActionButton)findViewById(R.id.fb_der);
+        pagetextview=(TextView)findViewById(R.id.pageTextView);
 
         recyclerView =(RecyclerView) findViewById(R.id.recyclerView);
         listaProductosadapter=new ListaProductosadapter(this);
@@ -105,27 +110,29 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (listaProductos.size()==0)
                     {
 
-                        Toast toast1 =Toast.makeText(getApplicationContext(),"¡No hay mas productos!", Toast.LENGTH_SHORT);
+                        Toast toast1 =Toast.makeText(getApplicationContext(),"¡No hay productos en esta pagina", Toast.LENGTH_SHORT);
 
                         toast1.show();
                         setNumPague(1);
+
                         listaProductosadapter.delete();
-                        obtenerDatos(getTextSearch(),getNumPague());
+
 
 
                     }
                     else
                     {
-                        
+
 
                         listaProductosadapter.adiccionarListaProductos(listaProductos);
-                        fb_der.setVisibility(View.VISIBLE);
-                        fb_izq.setVisibility(View.VISIBLE);
+
 
 
                     }
 
-
+                    fb_der.setVisibility(View.VISIBLE);
+                    fb_izq.setVisibility(View.VISIBLE);
+                    pagetextview.setVisibility(View.VISIBLE);
 
 
                 }
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         listaProductosadapter.delete();
         textSearch=s;
         numPague=1;
+        pagetextview.setText("Pagina:"+numPague);
         obtenerDatos(textSearch,numPague);
 
 
@@ -188,8 +196,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     {   listaProductosadapter.delete();
         numPague+=1;
         obtenerDatos(textSearch,numPague);
-        Toast toast1 = Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
-        toast1.show();
+        pagetextview.setText("Pagina:"+numPague);
     }
     public  void atras(View view)
     {
@@ -199,9 +206,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (numPague==0)
         {
             numPague=1;
-            Toast toast1 =Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
-
-            toast1.show();
+            pagetextview.setText("Pagina:"+numPague);
 
             listaProductosadapter.delete();
             obtenerDatos(textSearch,numPague);
@@ -209,9 +214,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         else
             {
-                Toast toast1 =Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
 
-                toast1.show();
+                pagetextview.setText("Pagina:"+numPague);
                 listaProductosadapter.delete();
                 obtenerDatos(textSearch,numPague);
         }
