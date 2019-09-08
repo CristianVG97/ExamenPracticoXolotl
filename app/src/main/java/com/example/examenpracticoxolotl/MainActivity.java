@@ -2,12 +2,15 @@ package com.example.examenpracticoxolotl;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
 import com.example.examenpracticoxolotl.models.ProductsPropertis;
 import com.example.examenpracticoxolotl.models.ResultProducts;
 import com.example.examenpracticoxolotl.storeapi.StoreService;
+
 
 import java.util.ArrayList;
 
@@ -20,10 +23,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
+
+    private  RecyclerView recyclerView;
+    private ListaProductosadapter listaProductosadapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        recyclerView =(RecyclerView) findViewById(R.id.recyclerView);
+        listaProductosadapter=new ListaProductosadapter(this);
+        recyclerView.setAdapter(listaProductosadapter);
+        recyclerView.setHasFixedSize(true);
+        GridLayoutManager layoutManager=new GridLayoutManager(this,3);
+        recyclerView.setLayoutManager(layoutManager);
+
+
 
         retrofit=new Retrofit.Builder()
                 .baseUrl("https://shoppapp.liverpool.com.mx/appclienteservices/services/v3/")
@@ -36,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void obtenerDatos() {
         StoreService service =retrofit.create(StoreService.class);
-        Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos("h",1,1);
+        final Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos("z",1);
         productosRespuestaCall.enqueue(new Callback<JsonResult>() {
 
 
@@ -46,11 +63,21 @@ public class MainActivity extends AppCompatActivity {
 
                     JsonResult jsonResult =response.body();
                     ResultProducts resultProducts = jsonResult.getPlpResults();
+                    ArrayList<ProductsPropertis> listaProductos =resultProducts.getRecords();
+                  //ProductsPropertis[] productsPropertis = resultProducts.getRecords();
 
-                    ProductsPropertis[] productsPropertis = resultProducts.getRecords();
+                    for (int i =0; i<listaProductos.size(); i++)
+                   {
+                       //Pokemon pokemon=listaPokemon.get(i);
+                       ProductsPropertis productsPropertis =listaProductos.get(i);
+                   Log.i("FALLO", "Producto: "+ productsPropertis.getProductDisplayName());
 
-                    Log.e("FALLO","ID producto"+ productsPropertis[0].getProductId()
-                    );
+
+                   }
+
+                    listaProductosadapter.adiccionarListaProductos(listaProductos);
+
+
                 }
                 else
                 {
@@ -62,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JsonResult> call, Throwable t) {
-                Log.e("FALLO",t.getMessage());
+                Log.e("FALLO","Error"+t.getMessage());
             }
         });
 

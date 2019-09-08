@@ -1,14 +1,18 @@
 package com.example.examenpracticoxolotl.models;
 
+import java.util.ArrayList;
+
 public class ResultProducts {
 
-    public ProductsPropertis[] getRecords() {
+
+    public ArrayList<ProductsPropertis> getRecords() {
         return records;
     }
 
-    public void setRecords(ProductsPropertis[] records) {
+    public void setRecords(ArrayList<ProductsPropertis> records) {
         this.records = records;
     }
 
-    public ProductsPropertis[] records;
+    private ArrayList<ProductsPropertis> records;
+   // public ProductsPropertis[] records;
 }

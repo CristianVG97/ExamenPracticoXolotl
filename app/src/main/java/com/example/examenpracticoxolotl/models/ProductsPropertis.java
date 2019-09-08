@@ -2,13 +2,32 @@ package com.example.examenpracticoxolotl.models;
 
 public class ProductsPropertis {
 
-    public String getProductId() {
-        return productId;
+
+    public String getProductDisplayName() {
+        return productDisplayName;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setProductDisplayName(String productDisplayName) {
+        this.productDisplayName = productDisplayName;
     }
 
-    private String productId;
+    private String productDisplayName;
+    private String listPrice;
+    private  String  smImage;
+
+    public String getListPrice() {
+        return listPrice;
+    }
+
+    public void setListPrice(String listPrice) {
+        this.listPrice = listPrice;
+    }
+
+    public String getSmImage() {
+        return smImage;
+    }
+
+    public void setSmImage(String smImage) {
+        this.smImage = smImage;
+    }
 }

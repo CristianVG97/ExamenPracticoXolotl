@@ -8,5 +8,5 @@ import retrofit2.http.Query;
 
 public interface StoreService {
     @GET("plp")
-    Call<JsonResult> obtenerListaProductos(@Query("search-string") String busqueda, @Query("page-number") int numPage, @Query("number-of-items-per-page") int numItems);
+    Call<JsonResult> obtenerListaProductos(@Query("search-string") String busqueda, @Query("page-number") int numPage);
 }
