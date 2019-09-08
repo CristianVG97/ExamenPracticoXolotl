@@ -1,5 +1,7 @@
 package com.example.examenpracticoxolotl;
 
+import android.annotation.SuppressLint;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,7 +32,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private Retrofit retrofit;
-    LinearLayout navegacionLayout ;
+    FloatingActionButton fb_izq ;
+    FloatingActionButton fb_der ;
+
 
     private  RecyclerView recyclerView;
     private ListaProductosadapter listaProductosadapter;
@@ -61,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        fb_izq=(FloatingActionButton)findViewById(R.id.fb_izq);
+        fb_der=(FloatingActionButton)findViewById(R.id.fb_der);
 
         recyclerView =(RecyclerView) findViewById(R.id.recyclerView);
         listaProductosadapter=new ListaProductosadapter(this);
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         productosRespuestaCall.enqueue(new Callback<JsonResult>() {
 
 
+            @SuppressLint("RestrictedApi")
             @Override
             public void onResponse(Call<JsonResult> call, Response<JsonResult> response) {
                 if (response.isSuccessful()) {
@@ -110,16 +116,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     }
                     else
                     {
-                        for (int i =0; i<listaProductos.size(); i++)
-                        {
-                            //Pokemon pokemon=listaPokemon.get(i);
-                            ProductsPropertis productsPropertis =listaProductos.get(i);
-                            Log.i("FALLO", "Producto: "+ productsPropertis.getProductDisplayName());
-
-
-                        }
+                        
 
                         listaProductosadapter.adiccionarListaProductos(listaProductos);
+                        fb_der.setVisibility(View.VISIBLE);
+                        fb_izq.setVisibility(View.VISIBLE);
+
 
                     }
 
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
                 else
                 {
-                    Log.e("FALLO","onResponse: " + response.errorBody());
+
                     Toast toast1 =Toast.makeText(getApplicationContext(),"¡Error al cargar datos.!", Toast.LENGTH_SHORT);
 
                     toast1.show();
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
     }
 
+
     @Override
     public boolean onQueryTextSubmit(String s) {
 
@@ -169,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         textSearch=s;
         numPague=1;
         obtenerDatos(textSearch,numPague);
+
+
 
         return false;
     }
