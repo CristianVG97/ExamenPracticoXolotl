@@ -9,6 +9,8 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
 import com.example.examenpracticoxolotl.models.ProductsPropertis;
@@ -27,6 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private Retrofit retrofit;
+    LinearLayout navegacionLayout ;
 
     private  RecyclerView recyclerView;
     private ListaProductosadapter listaProductosadapter;
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        navegacionLayout=(LinearLayout)findViewById(R.id.navegacion_layout);
 
         recyclerView =(RecyclerView) findViewById(R.id.recyclerView);
         listaProductosadapter=new ListaProductosadapter(this);
@@ -113,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextSubmit(String s) {
 
         listaProductosadapter.delete();
+
         obtenerDatos(s);
+        navegacionLayout.setVisibility(View.VISIBLE);
         return false;
     }
 
