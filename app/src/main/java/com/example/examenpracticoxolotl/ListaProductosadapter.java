@@ -62,6 +62,18 @@ public class ListaProductosadapter extends RecyclerView.Adapter<ListaProductosad
         notifyDataSetChanged();
     }
 
+    public void delete() {
+
+        int size = dataset.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                dataset.remove(0);
+            }
+
+            notifyItemRangeRemoved(0, size);
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder
     {
 
