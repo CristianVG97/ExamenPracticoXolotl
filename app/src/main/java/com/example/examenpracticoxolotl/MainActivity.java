@@ -1,10 +1,14 @@
 package com.example.examenpracticoxolotl;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
 import com.example.examenpracticoxolotl.models.ProductsPropertis;
@@ -20,7 +24,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private Retrofit retrofit;
 
@@ -48,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-    obtenerDatos();
+
     }
 
-    private void obtenerDatos() {
+    private void obtenerDatos(String textSearch) {
         StoreService service =retrofit.create(StoreService.class);
-        final Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos("z",1);
+        final Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos(textSearch,1);
         productosRespuestaCall.enqueue(new Callback<JsonResult>() {
 
 
@@ -93,5 +97,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public  boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_buscador,menu);
+        MenuItem item=menu.findItem(R.id.buscador);
+        SearchView searchView =(SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(this);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+
+        obtenerDatos(s);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 }
