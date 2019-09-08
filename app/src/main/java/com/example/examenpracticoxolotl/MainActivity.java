@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.examenpracticoxolotl.models.JsonResult;
 import com.example.examenpracticoxolotl.models.ProductsPropertis;
@@ -34,13 +35,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private  RecyclerView recyclerView;
     private ListaProductosadapter listaProductosadapter;
 
+    public int getNumPague() {
+        return numPague;
+    }
+
+    public void setNumPague(int numPague) {
+        this.numPague = numPague;
+    }
+
+    private int numPague =1;
+
+    public String getTextSearch() {
+        return textSearch;
+    }
+
+    public void setTextSearch(String textSearch) {
+        this.textSearch = textSearch;
+    }
+
+    private String textSearch="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        navegacionLayout=(LinearLayout)findViewById(R.id.navegacion_layout);
+
 
         recyclerView =(RecyclerView) findViewById(R.id.recyclerView);
         listaProductosadapter=new ListaProductosadapter(this);
@@ -60,9 +81,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
-    private void obtenerDatos(String textSearch) {
+    private void obtenerDatos(String textSearch, final int numPague) {
         StoreService service =retrofit.create(StoreService.class);
-        final Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos(textSearch,1);
+        final Call<JsonResult> productosRespuestaCall = service.obtenerListaProductos(textSearch,numPague);
         productosRespuestaCall.enqueue(new Callback<JsonResult>() {
 
 
@@ -75,22 +96,46 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     ArrayList<ProductsPropertis> listaProductos =resultProducts.getRecords();
                   //ProductsPropertis[] productsPropertis = resultProducts.getRecords();
 
-                    for (int i =0; i<listaProductos.size(); i++)
-                   {
-                       //Pokemon pokemon=listaPokemon.get(i);
-                       ProductsPropertis productsPropertis =listaProductos.get(i);
-                   Log.i("FALLO", "Producto: "+ productsPropertis.getProductDisplayName());
+                    if (listaProductos.size()==0)
+                    {
+
+                        Toast toast1 =Toast.makeText(getApplicationContext(),"¡No hay mas productos!", Toast.LENGTH_SHORT);
+
+                        toast1.show();
+                        setNumPague(1);
+                        listaProductosadapter.delete();
+                        obtenerDatos(getTextSearch(),getNumPague());
 
 
-                   }
+                    }
+                    else
+                    {
+                        for (int i =0; i<listaProductos.size(); i++)
+                        {
+                            //Pokemon pokemon=listaPokemon.get(i);
+                            ProductsPropertis productsPropertis =listaProductos.get(i);
+                            Log.i("FALLO", "Producto: "+ productsPropertis.getProductDisplayName());
 
-                    listaProductosadapter.adiccionarListaProductos(listaProductos);
+
+                        }
+
+                        listaProductosadapter.adiccionarListaProductos(listaProductos);
+
+                    }
+
+
 
 
                 }
                 else
                 {
                     Log.e("FALLO","onResponse: " + response.errorBody());
+                    Toast toast1 =Toast.makeText(getApplicationContext(),"¡Error al cargar datos.!", Toast.LENGTH_SHORT);
+
+                    toast1.show();
+                     setNumPague(1);
+                    listaProductosadapter.delete();
+
 
                 }
 
@@ -99,6 +144,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onFailure(Call<JsonResult> call, Throwable t) {
                 Log.e("FALLO","Error"+t.getMessage());
+                Toast toast1 =Toast.makeText(getApplicationContext(),"¡Error al cargar datos.!", Toast.LENGTH_SHORT);
+
+                toast1.show();
             }
         });
 
@@ -118,14 +166,51 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextSubmit(String s) {
 
         listaProductosadapter.delete();
+        textSearch=s;
+        numPague=1;
+        obtenerDatos(textSearch,numPague);
 
-        obtenerDatos(s);
-        navegacionLayout.setVisibility(View.VISIBLE);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String s) {
+
         return false;
+    }
+
+    public void siguiente(View view)
+    {   listaProductosadapter.delete();
+        numPague+=1;
+        obtenerDatos(textSearch,numPague);
+        Toast toast1 = Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
+        toast1.show();
+    }
+    public  void atras(View view)
+    {
+
+
+        numPague-=1;
+        if (numPague==0)
+        {
+            numPague=1;
+            Toast toast1 =Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
+
+            toast1.show();
+
+            listaProductosadapter.delete();
+            obtenerDatos(textSearch,numPague);
+
+        }
+        else
+            {
+                Toast toast1 =Toast.makeText(getApplicationContext(),"Pagina: "+numPague, Toast.LENGTH_SHORT);
+
+                toast1.show();
+                listaProductosadapter.delete();
+                obtenerDatos(textSearch,numPague);
+        }
+
+
     }
 }
